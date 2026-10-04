@@ -1,5 +1,5 @@
 {
-  "name": "AuraWave Music",
+  "name": "AuraWave",
   "description": "Luxurious high-fidelity music player with AI song recognition, 5-band pro equalizer, multi-language support (English, Arabic, French), synced lyrics, and smart playlists",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

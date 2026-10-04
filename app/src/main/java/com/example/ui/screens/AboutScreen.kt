@@ -81,8 +81,8 @@ fun AboutScreen(
     val context = LocalContext.current
     val strings = Localization.get(currentLanguage)
     val devEmail = "ahmedbecetti41@gmail.com"
-    val githubRepoUrl = "https://github.com/Ahmedbecett/nagham-music-player"
-    val downloadApkUrl = "https://github.com/Ahmedbecett/nagham-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk"
+    val githubRepoUrl = "https://github.com/Ahmedbecett/aurawave-music-player"
+    val downloadApkUrl = "https://github.com/Ahmedbecett/aurawave-music-player/releases"
 
     LazyColumn(
         modifier = modifier
@@ -357,7 +357,7 @@ fun AboutScreen(
                                 color = Color.White
                             )
                             Text(
-                                text = "Ahmedbecett/nagham-music-player",
+                                text = "Ahmedbecett/aurawave-music-player",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = Color(0xFF9DA5BF)
                             )

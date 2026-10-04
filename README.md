@@ -60,14 +60,14 @@ Featuring **Gemini AI Song Recognition**, a **5-band Pro Equalizer**, **Synchron
 - **Developer:** Ahmed Becetti (أحمد بن ستي)
 - **Email:** [ahmedbecetti41@gmail.com](mailto:ahmedbecetti41@gmail.com)
 - **GitHub Profile:** [@Ahmedbecett](https://github.com/Ahmedbecett)
-- **Repository:** [https://github.com/Ahmedbecett/nagham-music-player](https://github.com/Ahmedbecett/nagham-music-player)
+- **Repository:** [https://github.com/Ahmedbecett/aurawave-music-player](https://github.com/Ahmedbecett/aurawave-music-player)
 
 ---
 
 ## 📥 Direct APK Download & Releases
 
-- 👉 **[Download APK: Nagham-Music-Player-v1.0.apk (26 MB)](https://github.com/Ahmedbecett/nagham-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk)**
-- 🔗 **[Official GitHub Releases](https://github.com/Ahmedbecett/nagham-music-player/releases/tag/v1.0.0)**
+- 👉 **[Download APK: AuraWave-Music-Player-v1.0.apk (26 MB)](https://github.com/Ahmedbecett/aurawave-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk)**
+- 🔗 **[Official GitHub Releases](https://github.com/Ahmedbecett/aurawave-music-player/releases)**
 
 ---
 © 2026 AuraWave Music Player Pro. Developed by Ahmed Becetti.
