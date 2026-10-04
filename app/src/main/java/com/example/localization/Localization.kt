@@ -86,7 +86,11 @@ data class AppStrings(
     val permissionBannerDesc: String,
     val grantPermission: String,
     val language: String,
-    val permissionGranted: String
+    val permissionGranted: String,
+    val addMusic: String,
+    val scanStorage: String,
+    val noMusicFound: String,
+    val noMusicFoundPrompt: String
 )
 
 object Localization {
@@ -100,14 +104,14 @@ object Localization {
         navAiFinder = "AI Song Finder",
         navAbout = "About",
         nowPlaying = "Now Playing",
-        recommendedForYou = "Recommended for You",
+        recommendedForYou = "Your Audio Files",
         shuffleAll = "Shuffle All",
         favorites = "Favorites",
         recentlyPlayed = "Recently Played",
         exploreGenres = "Explore by Genre",
-        allTracks = "All Tracks",
+        allTracks = "All My Tracks",
         viewAll = "View All",
-        searchPlaceholder = "Search songs, artists, albums...",
+        searchPlaceholder = "Search your songs, artists, albums...",
         tabSongs = "Songs",
         tabFavorites = "Favorites",
         tabPlaylists = "Playlists",
@@ -168,10 +172,14 @@ object Localization {
         shareApp = "Share App",
         specsTitle = "Technical Specifications",
         permissionBannerTitle = "Device Files & Audio Access",
-        permissionBannerDesc = "Grant permission to scan and play all audio tracks from your device",
+        permissionBannerDesc = "Grant permission to scan and play all audio tracks from your phone storage",
         grantPermission = "Grant Permission",
         language = "Language",
-        permissionGranted = "Permission granted! Scanned audio tracks."
+        permissionGranted = "Permission granted! Scanned audio tracks.",
+        addMusic = "Add Audio Files",
+        scanStorage = "Scan Phone Storage",
+        noMusicFound = "No Music Files Found on Device",
+        noMusicFoundPrompt = "Tap below to select your own MP3/FLAC songs from your files or scan your device storage"
     )
 
     val arabic = AppStrings(
@@ -183,14 +191,14 @@ object Localization {
         navAiFinder = "ذكاء اصطناعي",
         navAbout = "حول التطبيق",
         nowPlaying = "قيد التشغيل الآن",
-        recommendedForYou = "موصى به لك",
+        recommendedForYou = "ملفاتك الصوتية",
         shuffleAll = "خلط الكل",
         favorites = "المفضلة",
         recentlyPlayed = "تم تشغيلها مؤخراً",
         exploreGenres = "استكشف حسب التصنيف",
-        allTracks = "جميع الأغاني",
+        allTracks = "أغاني جهازي",
         viewAll = "عرض الكل",
-        searchPlaceholder = "بحث عن أغنية، فنان، ألبوم...",
+        searchPlaceholder = "بحث في أغانيك، فنان، ألبوم...",
         tabSongs = "الأغاني",
         tabFavorites = "المفضلة",
         tabPlaylists = "قوائم التشغيل",
@@ -254,7 +262,11 @@ object Localization {
         permissionBannerDesc = "امنح الإذن لقراءة وتشغيل جميع الملفات الصوتية المخزنة على هاتفك",
         grantPermission = "منح الإذن الآن",
         language = "اللغة",
-        permissionGranted = "تم منح الإذن بنجاح! تم مسح مكتبة الصوتيات."
+        permissionGranted = "تم منح الإذن بنجاح! تم مسح مكتبة الصوتيات.",
+        addMusic = "إضافة ملفات صوتية من الهاتف",
+        scanStorage = "فحص ذاكرة الهاتف",
+        noMusicFound = "لا توجد ملفات صوتية بعد في جهازك",
+        noMusicFoundPrompt = "اضغط أدناه لاختيار أغانيك الخاصة من ملفات الهاتف أو مسح الذاكرة"
     )
 
     val french = AppStrings(
@@ -266,14 +278,14 @@ object Localization {
         navAiFinder = "Finder IA",
         navAbout = "À propos",
         nowPlaying = "En lecture",
-        recommendedForYou = "Recommandé pour vous",
+        recommendedForYou = "Vos fichiers audio",
         shuffleAll = "Lecture aléatoire",
         favorites = "Favoris",
         recentlyPlayed = "Récemment écoutés",
         exploreGenres = "Explorer par genre",
-        allTracks = "Tous les titres",
+        allTracks = "Tous mes titres",
         viewAll = "Voir tout",
-        searchPlaceholder = "Rechercher titres, artistes, albums...",
+        searchPlaceholder = "Rechercher parmi vos titres, artistes...",
         tabSongs = "Titres",
         tabFavorites = "Favoris",
         tabPlaylists = "Playlists",
@@ -337,7 +349,11 @@ object Localization {
         permissionBannerDesc = "Autorisez l'application à lire et jouer les musiques de votre appareil",
         grantPermission = "Accorder l'autorisation",
         language = "Langue",
-        permissionGranted = "Autorisation accordée ! Fichiers audio synchronisés."
+        permissionGranted = "Autorisation accordée ! Fichiers audio synchronisés.",
+        addMusic = "Ajouter des musiques",
+        scanStorage = "Scanner le stockage",
+        noMusicFound = "Aucune musique trouvée sur l'appareil",
+        noMusicFoundPrompt = "Appuyez ci-dessous pour importer vos fichiers audio (MP3/FLAC) ou scanner l'appareil"
     )
 
     fun get(language: AppLanguage): AppStrings = when (language) {

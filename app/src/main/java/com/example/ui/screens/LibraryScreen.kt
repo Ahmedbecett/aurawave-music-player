@@ -35,6 +35,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.QueueMusic
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -92,6 +94,8 @@ fun LibraryScreen(
     onAddSongToPlaylist: (PlaylistEntity, Song) -> Unit,
     onRemoveSongFromPlaylist: (PlaylistEntity, String) -> Unit,
     onSelectPlaylist: (PlaylistEntity?) -> Unit,
+    onImportFiles: () -> Unit,
+    onScanFiles: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val strings = Localization.get(uiState.language)
@@ -320,15 +324,17 @@ fun LibraryScreen(
                     else -> {
                         SongsListView(
                             songs = displayedSongs,
-                            emptyMessage = strings.noSongsInTab,
+                            emptyMessage = strings.noMusicFound,
                             playNowText = strings.playNow,
                             addToPlaylistText = strings.addToPlaylist,
+                            addMusicText = strings.addMusic,
                             currentSong = uiState.currentSong,
                             isPlaying = uiState.isPlaying,
                             favoriteIds = uiState.favoriteIds,
                             onSongClick = { song -> onPlaySong(song, displayedSongs) },
                             onToggleFavorite = onToggleFavorite,
-                            onAddToPlaylist = { song -> songForPlaylistDialog = song }
+                            onAddToPlaylist = { song -> songForPlaylistDialog = song },
+                            onImportFiles = onImportFiles
                         )
                     }
                 }
@@ -338,6 +344,7 @@ fun LibraryScreen(
                     emptyMessage = strings.noSongsInTab,
                     playNowText = strings.playNow,
                     addToPlaylistText = strings.addToPlaylist,
+                    addMusicText = strings.addMusic,
                     currentSong = uiState.currentSong,
                     isPlaying = uiState.isPlaying,
                     favoriteIds = uiState.favoriteIds,
@@ -346,22 +353,37 @@ fun LibraryScreen(
                     onAddToPlaylist = { song -> songForPlaylistDialog = song },
                     onRemoveFromPlaylist = if (uiState.selectedPlaylist != null) { songId ->
                         onRemoveSongFromPlaylist(uiState.selectedPlaylist, songId)
-                    } else null
+                    } else null,
+                    onImportFiles = onImportFiles
                 )
             }
         }
 
-        if (uiState.activeTab == LibraryTab.PLAYLISTS && uiState.selectedPlaylist == null) {
-            FloatingActionButton(
-                onClick = { showCreatePlaylistDialog = true },
-                containerColor = NeonCyan,
-                contentColor = Color(0xFF0C0D14),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 110.dp, end = 20.dp)
-                    .testTag("fab_create_playlist")
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = strings.createPlaylist)
+        if (uiState.selectedPlaylist == null) {
+            if (uiState.activeTab == LibraryTab.PLAYLISTS) {
+                FloatingActionButton(
+                    onClick = { showCreatePlaylistDialog = true },
+                    containerColor = NeonCyan,
+                    contentColor = Color(0xFF0C0D14),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 110.dp, end = 20.dp)
+                        .testTag("fab_create_playlist")
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = strings.createPlaylist)
+                }
+            } else if (uiState.activeTab == LibraryTab.SONGS) {
+                FloatingActionButton(
+                    onClick = onImportFiles,
+                    containerColor = NeonCyan,
+                    contentColor = Color(0xFF0C0D14),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 110.dp, end = 20.dp)
+                        .testTag("fab_add_audio_files")
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = strings.addMusic)
+                }
             }
         }
     }
@@ -373,13 +395,15 @@ fun SongsListView(
     emptyMessage: String,
     playNowText: String,
     addToPlaylistText: String,
+    addMusicText: String,
     currentSong: Song?,
     isPlaying: Boolean,
     favoriteIds: Set<String>,
     onSongClick: (Song) -> Unit,
     onToggleFavorite: (Song) -> Unit,
     onAddToPlaylist: (Song) -> Unit,
-    onRemoveFromPlaylist: ((String) -> Unit)? = null
+    onRemoveFromPlaylist: ((String) -> Unit)? = null,
+    onImportFiles: (() -> Unit)? = null
 ) {
     if (songs.isEmpty()) {
         Box(
@@ -388,7 +412,10 @@ fun SongsListView(
                 .padding(bottom = 120.dp),
             contentAlignment = Alignment.Center
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.MusicNote,
                     contentDescription = null,
@@ -399,8 +426,25 @@ fun SongsListView(
                 Text(
                     text = emptyMessage,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF9DA5BF)
+                    color = Color(0xFF9DA5BF),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
+
+                if (onImportFiles != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = onImportFiles,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = NeonCyan,
+                            contentColor = Color(0xFF0C0D14)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(addMusicText, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
         return

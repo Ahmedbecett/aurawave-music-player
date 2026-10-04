@@ -140,22 +140,49 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadMusicCatalog() {
         viewModelScope.launch {
-            val builtIn = BuiltInMusicCatalog.defaultSongs
             val scanned = LocalMediaScanner.scanDeviceAudio(getApplication())
-            val combined = (builtIn + scanned).distinctBy { it.id }
-
             val favs = _uiState.value.favoriteIds
-            val updated = combined.map { it.copy(isFavorite = favs.contains(it.id)) }
+            val updated = scanned.map { it.copy(isFavorite = favs.contains(it.id)) }
 
             val initialSong = updated.firstOrNull()
             _uiState.value = _uiState.value.copy(
                 allSongs = updated,
-                currentSong = _uiState.value.currentSong ?: initialSong,
+                currentSong = if (updated.any { it.id == _uiState.value.currentSong?.id }) _uiState.value.currentSong else initialSong,
                 durationMs = _uiState.value.currentSong?.durationMs ?: (initialSong?.durationMs ?: 0L),
                 queue = if (_uiState.value.queue.isEmpty()) updated else _uiState.value.queue,
                 parsedLyrics = BuiltInMusicCatalog.parseLyrics(_uiState.value.currentSong?.lyrics ?: initialSong?.lyrics),
                 hasStoragePermission = scanned.isNotEmpty() || _uiState.value.hasStoragePermission
             )
+        }
+    }
+
+    fun importAudioFiles(uris: List<android.net.Uri>) {
+        viewModelScope.launch {
+            val context = getApplication<Application>()
+            val parsedSongs = mutableListOf<Song>()
+            for (uri in uris) {
+                try {
+                    context.contentResolver.takePersistableUriPermission(
+                        uri,
+                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (e: Exception) {
+                    // Ignore if takePersistableUriPermission isn't supported for this uri
+                }
+                val song = LocalMediaScanner.parseSongFromUri(context, uri)
+                if (song != null) {
+                    parsedSongs.add(song)
+                }
+            }
+
+            if (parsedSongs.isNotEmpty()) {
+                LocalMediaScanner.saveImportedSongs(context, parsedSongs)
+                loadMusicCatalog()
+                // Auto play first newly added track if nothing was playing
+                if (_uiState.value.currentSong == null) {
+                    parsedSongs.firstOrNull()?.let { playSong(it) }
+                }
+            }
         }
     }
 

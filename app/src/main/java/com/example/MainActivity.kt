@@ -145,6 +145,16 @@ fun AuraWaveApp(viewModel: MusicViewModel) {
         permissionLauncher.launch(permissionsToRequest)
     }
 
+    // Audio File Picker for importing custom music files directly from device storage
+    val audioPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            viewModel.importAudioFiles(uris)
+            Toast.makeText(context, "${uris.size} tracks added to AuraWave!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     // Handle system back navigation
     BackHandler(enabled = uiState.isPlayerExpanded || uiState.selectedPlaylist != null) {
         if (uiState.isPlayerExpanded) {
@@ -258,6 +268,12 @@ fun AuraWaveApp(viewModel: MusicViewModel) {
                             onRequestStoragePermission = {
                                 permissionLauncher.launch(permissionsToRequest)
                             },
+                            onImportFiles = {
+                                audioPickerLauncher.launch(arrayOf("audio/*", "application/ogg"))
+                            },
+                            onScanFiles = {
+                                viewModel.loadMusicCatalog()
+                            },
                             onSetLanguage = { lang -> viewModel.setLanguage(lang) },
                             onOpenPlayer = { viewModel.setPlayerExpanded(true) }
                         )
@@ -274,7 +290,13 @@ fun AuraWaveApp(viewModel: MusicViewModel) {
                             onDeletePlaylist = { pl -> viewModel.deletePlaylist(pl) },
                             onAddSongToPlaylist = { pl, song -> viewModel.addSongToPlaylist(pl, song) },
                             onRemoveSongFromPlaylist = { pl, id -> viewModel.removeSongFromPlaylist(pl, id) },
-                            onSelectPlaylist = { pl -> viewModel.selectPlaylist(pl) }
+                            onSelectPlaylist = { pl -> viewModel.selectPlaylist(pl) },
+                            onImportFiles = {
+                                audioPickerLauncher.launch(arrayOf("audio/*", "application/ogg"))
+                            },
+                            onScanFiles = {
+                                viewModel.loadMusicCatalog()
+                            }
                         )
                     }
 
