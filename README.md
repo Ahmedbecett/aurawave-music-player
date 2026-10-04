@@ -66,8 +66,8 @@ Featuring **Gemini AI Song Recognition**, a **5-band Pro Equalizer**, **Synchron
 
 ## 📥 Direct APK Download & Releases
 
-- 👉 **[Download APK: AuraWave-Music-Player-v1.0.apk (26 MB)](https://github.com/Ahmedbecett/aurawave-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk)**
-- 🔗 **[Official GitHub Releases](https://github.com/Ahmedbecett/aurawave-music-player/releases)**
+- 👉 **[Download Latest APK: AuraWave-Pro-v1.1.0.apk (26.8 MB)](https://github.com/Ahmedbecett/aurawave-music-player/releases/download/v1.1.0/AuraWave-Pro-v1.1.0.apk)**
+- 🔗 **[Official GitHub Releases v1.1.0](https://github.com/Ahmedbecett/aurawave-music-player/releases/tag/v1.1.0)**
 
 ---
 © 2026 AuraWave Music Player Pro. Developed by Ahmed Becetti.
