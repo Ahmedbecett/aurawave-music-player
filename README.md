@@ -64,10 +64,19 @@ Featuring **Gemini AI Song Recognition**, a **5-band Pro Equalizer**, **Synchron
 
 ---
 
-## 📥 Direct APK Download & Releases
+## 📥 Direct APK Download & Production Releases
 
-- 👉 **[Download Latest APK: AuraWave-Pro-v1.2.0.apk (26.3 MB)](https://github.com/Ahmedbecett/aurawave-music-player/releases/download/v1.2.0/AuraWave-Pro-v1.2.0.apk)**
-- 🔗 **[Official GitHub Releases v1.2.0](https://github.com/Ahmedbecett/aurawave-music-player/releases/tag/v1.2.0)**
+- 🚀 **[Download Latest Production Release: AuraWave-v1.2.1-release.apk (19.9 MB)](https://github.com/Ahmedbecett/aurawave-music-player/raw/main/.build-outputs/AuraWave-v1.2.1-release.apk)**
+- 🔗 **[Official GitHub Releases v1.2.1](https://github.com/Ahmedbecett/aurawave-music-player/releases/tag/v1.2.1)**
+
+### 📋 Release Notes & Changelog (v1.2.1 / versionCode 2)
+> **What's New / ما الجديد (Store Compliant Changelog):**
+- **Production Certificate Security:** Signed with permanent 30-year official upload certificate (`CN=Ahmed Becetti, OU=AuraWave Music, O=Ahmed Becetti`) eliminating untrusted debug certificate errors.
+- **Enhanced Signature Schemes:** Verified with APK Signature Scheme v2 & v3 for complete app store compliance.
+- **Optimized APK Size:** Reduced binary size from 27 MB down to 19.9 MB via ProGuard/R8 release shrinking and resource optimization.
+- **Audio & Media Indexing:** Enhanced local audio scanning performance across all modern Android versions (Android 7.0 - 15).
+- **Audio Engine Stability:** Fixed minor equalizing latency and improved visualizer render frame rates.
+- **Multilingual Support:** Polished RTL support for Arabic and improved locale handling for English and French.
 
 ---
 © 2026 AuraWave Music Player Pro. Developed by Ahmed Becetti.
