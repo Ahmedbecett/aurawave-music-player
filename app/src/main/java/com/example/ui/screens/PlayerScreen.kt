@@ -85,6 +85,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.localization.Localization
 import com.example.model.RepeatMode
 import com.example.model.Song
 import com.example.ui.components.SleepTimerDialog
@@ -122,6 +123,7 @@ fun PlayerScreen(
     modifier: Modifier = Modifier
 ) {
     val currentSong = uiState.currentSong ?: return
+    val strings = Localization.get(uiState.language)
 
     var isUserSeeking by remember { mutableStateOf(false) }
     var seekPositionMs by remember { mutableFloatStateOf(0f) }
@@ -172,13 +174,13 @@ fun PlayerScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "قائمة الانتظار (${uiState.queue.size})",
+                        text = "${strings.queue} (${uiState.queue.size})",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
 
                     Text(
-                        text = if (uiState.isShuffle) "عشوائي مفعّل" else "تشغيل متسلسل",
+                        text = if (uiState.isShuffle) "Shuffle ON" else "Sequential",
                         style = MaterialTheme.typography.labelSmall,
                         color = NeonCyan
                     )
@@ -283,7 +285,7 @@ fun PlayerScreen(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "قيد التشغيل الآن",
+                        text = strings.nowPlaying,
                         style = MaterialTheme.typography.labelSmall,
                         color = Color(0xFF9DA5BF)
                     )
@@ -300,7 +302,7 @@ fun PlayerScreen(
                     IconButton(onClick = onNavigateEqualizer) {
                         Icon(
                             imageVector = Icons.Default.Equalizer,
-                            contentDescription = "معادل الصوت",
+                            contentDescription = strings.eqTitle,
                             tint = NeonPurple,
                             modifier = Modifier.size(24.dp)
                         )
@@ -311,13 +313,13 @@ fun PlayerScreen(
                             BadgedBox(
                                 badge = {
                                     Badge(containerColor = NeonCyan) {
-                                        Text("${uiState.sleepTimerMinutesLeft}د", color = Color(0xFF0C0D14))
+                                        Text("${uiState.sleepTimerMinutesLeft}m", color = Color(0xFF0C0D14))
                                     }
                                 }
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Bedtime,
-                                    contentDescription = "مؤقت النوم",
+                                    contentDescription = strings.sleepTimer,
                                     tint = NeonCyan,
                                     modifier = Modifier.size(22.dp)
                                 )
@@ -325,7 +327,7 @@ fun PlayerScreen(
                         } else {
                             Icon(
                                 imageVector = Icons.Default.Bedtime,
-                                contentDescription = "مؤقت النوم",
+                                contentDescription = strings.sleepTimer,
                                 tint = Color(0xFF9DA5BF),
                                 modifier = Modifier.size(22.dp)
                             )
@@ -357,7 +359,7 @@ fun PlayerScreen(
                     onClick = { if (uiState.showLyrics) onToggleLyrics() },
                     text = {
                         Text(
-                            "غلاف الألبوم",
+                            strings.coverArt,
                             fontSize = 12.sp,
                             fontWeight = if (!uiState.showLyrics) FontWeight.Bold else FontWeight.Normal
                         )
@@ -368,7 +370,7 @@ fun PlayerScreen(
                     onClick = { if (!uiState.showLyrics) onToggleLyrics() },
                     text = {
                         Text(
-                            "الكلمات",
+                            strings.lyrics,
                             fontSize = 12.sp,
                             fontWeight = if (uiState.showLyrics) FontWeight.Bold else FontWeight.Normal
                         )

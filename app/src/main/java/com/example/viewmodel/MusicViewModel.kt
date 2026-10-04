@@ -3,12 +3,14 @@ package com.example.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ai.AiMusicRecognizer
 import com.example.data.BuiltInMusicCatalog
 import com.example.data.FavoriteEntity
 import com.example.data.LocalMediaScanner
 import com.example.data.NaghamDatabase
 import com.example.data.PlaylistEntity
 import com.example.data.RecentHistoryEntity
+import com.example.localization.AppLanguage
 import com.example.model.EqualizerBand
 import com.example.model.EqualizerState
 import com.example.model.LyricLine
@@ -18,23 +20,21 @@ import com.example.playback.NaghamAudioEngine
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-enum class LibraryTab(val title: String) {
-    SONGS("الأغاني"),
-    FAVORITES("المفضلة"),
-    PLAYLISTS("قوائم التشغيل"),
-    ARTISTS("الفنانون"),
-    ALBUMS("الألبومات"),
-    GENRES("الأنواع")
+enum class LibraryTab {
+    SONGS,
+    FAVORITES,
+    PLAYLISTS,
+    ARTISTS,
+    ALBUMS,
+    GENRES
 }
 
 data class MusicUiState(
+    val language: AppLanguage = AppLanguage.ENGLISH, // Default system language is English
     val allSongs: List<Song> = emptyList(),
     val currentSong: Song? = null,
     val isPlaying: Boolean = false,
@@ -57,7 +57,8 @@ data class MusicUiState(
     val playbackSpeed: Float = 1.0f,
     val volume: Float = 1.0f,
     val parsedLyrics: List<LyricLine> = emptyList(),
-    val activeLyricIndex: Int = -1
+    val activeLyricIndex: Int = -1,
+    val hasStoragePermission: Boolean = false
 )
 
 class MusicViewModel(application: Application) : AndroidViewModel(application) {
@@ -68,6 +69,7 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     private val recentDao = db.recentDao()
 
     val audioEngine = NaghamAudioEngine(application)
+    val aiRecognizer = AiMusicRecognizer(application)
 
     private val _uiState = MutableStateFlow(MusicUiState())
     val uiState: StateFlow<MusicUiState> = _uiState.asStateFlow()
@@ -125,6 +127,17 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun setLanguage(language: AppLanguage) {
+        _uiState.value = _uiState.value.copy(language = language)
+    }
+
+    fun setStoragePermission(granted: Boolean) {
+        _uiState.value = _uiState.value.copy(hasStoragePermission = granted)
+        if (granted) {
+            loadMusicCatalog()
+        }
+    }
+
     fun loadMusicCatalog() {
         viewModelScope.launch {
             val builtIn = BuiltInMusicCatalog.defaultSongs
@@ -140,7 +153,8 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
                 currentSong = _uiState.value.currentSong ?: initialSong,
                 durationMs = _uiState.value.currentSong?.durationMs ?: (initialSong?.durationMs ?: 0L),
                 queue = if (_uiState.value.queue.isEmpty()) updated else _uiState.value.queue,
-                parsedLyrics = BuiltInMusicCatalog.parseLyrics(initialSong?.lyrics)
+                parsedLyrics = BuiltInMusicCatalog.parseLyrics(_uiState.value.currentSong?.lyrics ?: initialSong?.lyrics),
+                hasStoragePermission = scanned.isNotEmpty() || _uiState.value.hasStoragePermission
             )
         }
     }
@@ -166,6 +180,20 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
         // Record in recent history
         viewModelScope.launch {
             recentDao.addRecent(RecentHistoryEntity(songId = song.id, playedAt = System.currentTimeMillis()))
+        }
+    }
+
+    fun playMatchedAiSong(title: String, artist: String) {
+        val all = _uiState.value.allSongs
+        val matched = all.find { song ->
+            song.title.contains(title, ignoreCase = true) ||
+            song.artist.contains(artist, ignoreCase = true) ||
+            title.contains(song.title, ignoreCase = true)
+        } ?: all.firstOrNull()
+
+        if (matched != null) {
+            playSong(matched)
+            setPlayerExpanded(true)
         }
     }
 
@@ -203,7 +231,6 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
         val queue = state.queue
         if (queue.isEmpty()) return
 
-        // If played more than 3 seconds, rewind to start
         if (state.progressMs > 3000L) {
             seekTo(0L)
             return
@@ -296,7 +323,7 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
         val newBands = currentEq.bands.mapIndexed { idx, band ->
             if (idx == bandIndex) band.copy(gainDb = gainDb) else band
         }
-        val newState = currentEq.copy(presetName = "مخصص", bands = newBands)
+        val newState = currentEq.copy(presetName = "Custom", bands = newBands)
         audioEngine.applyEqualizer(newState)
         _uiState.value = _uiState.value.copy(equalizerState = newState)
     }
@@ -334,7 +361,6 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
                 remaining--
                 _uiState.value = _uiState.value.copy(sleepTimerMinutesLeft = remaining)
             }
-            // Timer expired: stop playback gracefully
             audioEngine.pause()
             _uiState.value = _uiState.value.copy(sleepTimerMinutesLeft = 0)
         }

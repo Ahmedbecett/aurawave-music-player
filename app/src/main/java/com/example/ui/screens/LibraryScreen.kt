@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -69,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.data.PlaylistEntity
+import com.example.localization.Localization
 import com.example.model.Song
 import com.example.ui.components.AddToPlaylistDialog
 import com.example.ui.components.CreatePlaylistDialog
@@ -94,13 +94,13 @@ fun LibraryScreen(
     onSelectPlaylist: (PlaylistEntity?) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = Localization.get(uiState.language)
     var showCreatePlaylistDialog by remember { mutableStateOf(false) }
     var songForPlaylistDialog by remember { mutableStateOf<Song?>(null) }
     var filterArtist by remember { mutableStateOf<String?>(null) }
     var filterAlbum by remember { mutableStateOf<String?>(null) }
     var filterGenre by remember { mutableStateOf<String?>(null) }
 
-    // Dialogs
     if (showCreatePlaylistDialog) {
         CreatePlaylistDialog(
             onDismiss = { showCreatePlaylistDialog = false },
@@ -124,7 +124,7 @@ fun LibraryScreen(
                 .fillMaxSize()
                 .padding(top = 16.dp)
         ) {
-            // Header / Search Bar
+            // Search Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -134,7 +134,7 @@ fun LibraryScreen(
                 OutlinedTextField(
                     value = uiState.searchQuery,
                     onValueChange = onSearchQueryChanged,
-                    placeholder = { Text("بحث عن أغنية، فنان، ألبوم...") },
+                    placeholder = { Text(strings.searchPlaceholder) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -147,7 +147,7 @@ fun LibraryScreen(
                             IconButton(onClick = { onSearchQueryChanged("") }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
-                                    contentDescription = "مسح",
+                                    contentDescription = "Clear",
                                     tint = Color(0xFF9DA5BF)
                                 )
                             }
@@ -171,7 +171,7 @@ fun LibraryScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Playlist Detail View Back Bar (if selected)
+            // Sub-Filter Back Bar
             if (uiState.selectedPlaylist != null || filterArtist != null || filterAlbum != null || filterGenre != null) {
                 Row(
                     modifier = Modifier
@@ -189,14 +189,14 @@ fun LibraryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "رجوع",
+                            contentDescription = "Back",
                             tint = NeonCyan
                         )
                     }
                     val title = uiState.selectedPlaylist?.name
-                        ?: filterArtist?.let { "فنان: $it" }
-                        ?: filterAlbum?.let { "ألبوم: $it" }
-                        ?: filterGenre?.let { "تصنيف: $it" }
+                        ?: filterArtist?.let { "${strings.artist}: $it" }
+                        ?: filterAlbum?.let { "${strings.album}: $it" }
+                        ?: filterGenre?.let { "${strings.genre}: $it" }
                         ?: ""
                     Text(
                         text = title,
@@ -212,15 +212,23 @@ fun LibraryScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "حذف القائمة",
+                                contentDescription = "Delete Playlist",
                                 tint = Color(0xFFF72585)
                             )
                         }
                     }
                 }
             } else {
-                // Category Tabs
+                // Category Tabs with Localized Titles
                 val tabs = LibraryTab.values()
+                val tabTitles = listOf(
+                    strings.tabSongs,
+                    strings.tabFavorites,
+                    strings.tabPlaylists,
+                    strings.tabArtists,
+                    strings.tabAlbums,
+                    strings.tabGenres
+                )
                 val selectedTabIndex = tabs.indexOf(uiState.activeTab).coerceAtLeast(0)
 
                 ScrollableTabRow(
@@ -238,13 +246,13 @@ fun LibraryScreen(
                     },
                     divider = {}
                 ) {
-                    tabs.forEach { tab ->
+                    tabs.forEachIndexed { idx, tab ->
                         Tab(
                             selected = uiState.activeTab == tab,
                             onClick = { onTabSelected(tab) },
                             text = {
                                 Text(
-                                    text = tab.title,
+                                    text = tabTitles.getOrElse(idx) { "" },
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = if (uiState.activeTab == tab) FontWeight.Bold else FontWeight.Normal
                                     ),
@@ -258,7 +266,6 @@ fun LibraryScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Main Content Area based on tab or active filter
             val allSongs = uiState.allSongs
             val query = uiState.searchQuery.trim().lowercase()
 
@@ -280,13 +287,14 @@ fun LibraryScreen(
                         song.genre.lowercase().contains(query)
             }
 
-            // Tab-specific views (Playlists, Artists, Albums, Genres) when no sub-filter is selected
             if (uiState.selectedPlaylist == null && filterArtist == null && filterAlbum == null && filterGenre == null) {
                 when (uiState.activeTab) {
                     LibraryTab.PLAYLISTS -> {
                         PlaylistsList(
                             playlists = uiState.playlists,
                             allSongs = allSongs,
+                            emptyText = strings.noPlaylistsYet,
+                            emptyPrompt = strings.createPlaylistPrompt,
                             onSelectPlaylist = onSelectPlaylist,
                             onCreateNew = { showCreatePlaylistDialog = true }
                         )
@@ -310,9 +318,11 @@ fun LibraryScreen(
                         )
                     }
                     else -> {
-                        // Songs or Favorites
                         SongsListView(
                             songs = displayedSongs,
+                            emptyMessage = strings.noSongsInTab,
+                            playNowText = strings.playNow,
+                            addToPlaylistText = strings.addToPlaylist,
                             currentSong = uiState.currentSong,
                             isPlaying = uiState.isPlaying,
                             favoriteIds = uiState.favoriteIds,
@@ -323,9 +333,11 @@ fun LibraryScreen(
                     }
                 }
             } else {
-                // Display filtered song list for playlist / artist / album / genre
                 SongsListView(
                     songs = displayedSongs,
+                    emptyMessage = strings.noSongsInTab,
+                    playNowText = strings.playNow,
+                    addToPlaylistText = strings.addToPlaylist,
                     currentSong = uiState.currentSong,
                     isPlaying = uiState.isPlaying,
                     favoriteIds = uiState.favoriteIds,
@@ -339,7 +351,6 @@ fun LibraryScreen(
             }
         }
 
-        // Floating Action Button for Playlists tab
         if (uiState.activeTab == LibraryTab.PLAYLISTS && uiState.selectedPlaylist == null) {
             FloatingActionButton(
                 onClick = { showCreatePlaylistDialog = true },
@@ -350,7 +361,7 @@ fun LibraryScreen(
                     .padding(bottom = 110.dp, end = 20.dp)
                     .testTag("fab_create_playlist")
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "قائمة تشغيل جديدة")
+                Icon(imageVector = Icons.Default.Add, contentDescription = strings.createPlaylist)
             }
         }
     }
@@ -359,6 +370,9 @@ fun LibraryScreen(
 @Composable
 fun SongsListView(
     songs: List<Song>,
+    emptyMessage: String,
+    playNowText: String,
+    addToPlaylistText: String,
     currentSong: Song?,
     isPlaying: Boolean,
     favoriteIds: Set<String>,
@@ -383,7 +397,7 @@ fun SongsListView(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "لا توجد أغانٍ متوفرة في هذا القسم",
+                    text = emptyMessage,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF9DA5BF)
                 )
@@ -407,6 +421,8 @@ fun SongsListView(
                 isCurrent = isCurrent,
                 isPlaying = isPlaying && isCurrent,
                 isFavorite = isFav,
+                playNowText = playNowText,
+                addToPlaylistText = addToPlaylistText,
                 onClick = { onSongClick(song) },
                 onToggleFavorite = { onToggleFavorite(song) },
                 onAddToPlaylist = { onAddToPlaylist(song) },
@@ -423,6 +439,8 @@ fun SongListItem(
     isCurrent: Boolean,
     isPlaying: Boolean,
     isFavorite: Boolean,
+    playNowText: String,
+    addToPlaylistText: String,
     onClick: () -> Unit,
     onToggleFavorite: () -> Unit,
     onAddToPlaylist: () -> Unit,
@@ -446,7 +464,6 @@ fun SongListItem(
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Album Art
             Box(
                 modifier = Modifier
                     .size(50.dp)
@@ -521,20 +538,18 @@ fun SongListItem(
                 )
             }
 
-            // Favorite Button
             IconButton(
                 onClick = onToggleFavorite,
                 modifier = Modifier.size(36.dp)
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "المفضلة",
+                    contentDescription = "Favorite",
                     tint = if (isFavorite) NeonPink else Color(0xFF6B7280),
                     modifier = Modifier.size(20.dp)
                 )
             }
 
-            // More Options
             Box {
                 IconButton(
                     onClick = { menuExpanded = true },
@@ -542,7 +557,7 @@ fun SongListItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = "خيارات إضافية",
+                        contentDescription = "Options",
                         tint = Color(0xFF9DA5BF),
                         modifier = Modifier.size(20.dp)
                     )
@@ -554,7 +569,7 @@ fun SongListItem(
                     modifier = Modifier.background(DarkCard)
                 ) {
                     DropdownMenuItem(
-                        text = { Text("تشغيل الآن", color = Color.White) },
+                        text = { Text(playNowText, color = Color.White) },
                         leadingIcon = {
                             Icon(Icons.Default.PlayArrow, contentDescription = null, tint = NeonCyan)
                         },
@@ -564,7 +579,7 @@ fun SongListItem(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("إضافة إلى قائمة تشغيل", color = Color.White) },
+                        text = { Text(addToPlaylistText, color = Color.White) },
                         leadingIcon = {
                             Icon(Icons.Default.PlaylistAdd, contentDescription = null, tint = NeonPurple)
                         },
@@ -575,7 +590,7 @@ fun SongListItem(
                     )
                     if (onRemoveFromPlaylist != null) {
                         DropdownMenuItem(
-                            text = { Text("إزالة من القائمة", color = Color(0xFFF72585)) },
+                            text = { Text("Remove", color = Color(0xFFF72585)) },
                             leadingIcon = {
                                 Icon(Icons.Default.Delete, contentDescription = null, tint = Color(0xFFF72585))
                             },
@@ -595,6 +610,8 @@ fun SongListItem(
 fun PlaylistsList(
     playlists: List<PlaylistEntity>,
     allSongs: List<Song>,
+    emptyText: String,
+    emptyPrompt: String,
     onSelectPlaylist: (PlaylistEntity) -> Unit,
     onCreateNew: () -> Unit
 ) {
@@ -614,13 +631,13 @@ fun PlaylistsList(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "لا توجد قوائم تشغيل حتى الآن",
+                    text = emptyText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF9DA5BF)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "اضغط على الزر أدناه لإنشاء قائمة تشغيل مخصصة",
+                    text = emptyPrompt,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF6B7280)
                 )
@@ -675,7 +692,7 @@ fun PlaylistsList(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "$count مقطع موسيقي",
+                            text = "$count tracks",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF9DA5BF)
                         )
@@ -737,7 +754,7 @@ fun ArtistsGrid(
                             color = Color.White
                         )
                         Text(
-                            text = "$count أغانٍ",
+                            text = "$count tracks",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF9DA5BF)
                         )
@@ -821,7 +838,7 @@ fun AlbumsGrid(
                             color = Color.White
                         )
                         Text(
-                            text = "${firstSong?.artist} • ${albumSongs.size} مقاطع",
+                            text = "${firstSong?.artist} • ${albumSongs.size} tracks",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF9DA5BF)
                         )
@@ -884,7 +901,7 @@ fun GenresGrid(
                             color = Color.White
                         )
                         Text(
-                            text = "$count أغانٍ",
+                            text = "$count tracks",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF9DA5BF)
                         )

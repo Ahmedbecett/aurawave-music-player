@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.SurroundSound
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,6 +46,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.localization.AppLanguage
+import com.example.localization.Localization
 import com.example.model.EqualizerState
 import com.example.ui.components.VisualizerView
 import com.example.ui.theme.DarkCard
@@ -62,6 +63,7 @@ fun EqualizerScreen(
     equalizerState: EqualizerState,
     visualizerBars: List<Float>,
     isPlaying: Boolean,
+    currentLanguage: AppLanguage,
     onToggleEnabled: (Boolean) -> Unit,
     onSelectPreset: (String) -> Unit,
     onBandGainChanged: (bandIndex: Int, gainDb: Int) -> Unit,
@@ -69,6 +71,7 @@ fun EqualizerScreen(
     onVirtualizerChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = Localization.get(currentLanguage)
     val presets = EqualizerState.PRESETS.keys.toList()
 
     LazyColumn(
@@ -94,13 +97,13 @@ fun EqualizerScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "معادل الصوت الاحترافي",
+                            text = strings.eqTitle,
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
                     }
                     Text(
-                        text = "تحكم كامل في ترددات الصوت والمؤثرات",
+                        text = strings.eqSubtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF9DA5BF)
                     )
@@ -127,7 +130,9 @@ fun EqualizerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = DarkCard),
-                border = CardDefaults.outlinedCardBorder().copy(brush = Brush.horizontalGradient(listOf(NeonCyan.copy(alpha = 0.5f), NeonPurple.copy(alpha = 0.5f))))
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = Brush.horizontalGradient(listOf(NeonCyan.copy(alpha = 0.5f), NeonPurple.copy(alpha = 0.5f)))
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -144,15 +149,15 @@ fun EqualizerScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "محلل الترددات الطيفي المباشر",
+                                text = strings.spectrumAnalyzer,
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                 color = Color.White
                             )
                         }
 
                         Text(
-                            text = if (isPlaying) "نشط (Active)" else "متوقف",
-                            style = MaterialTheme.typography.labelSmall,
+                            text = if (isPlaying) "ACTIVE" else "STANDBY",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = if (isPlaying) NeonCyan else Color(0xFF6B7280)
                         )
                     }
@@ -172,7 +177,7 @@ fun EqualizerScreen(
         // Presets Chips
         item {
             Text(
-                text = "الإعدادات المسبقة (Presets)",
+                text = strings.presets,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = Color.White
             )
@@ -206,7 +211,7 @@ fun EqualizerScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        // 5-Band Equalizer Card
+        // 5-Band Sliders Card
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -215,13 +220,12 @@ fun EqualizerScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "نطاقات التردد (5-Band Frequency Response)",
+                        text = "5-Band Graphic Frequency Response",
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 5 Bands Column list
                     equalizerState.bands.forEachIndexed { index, band ->
                         Row(
                             modifier = Modifier
@@ -274,7 +278,6 @@ fun EqualizerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Bass Boost Card
                 Card(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(18.dp),
@@ -298,7 +301,7 @@ fun EqualizerScreen(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "تضخيم الباس",
+                                text = strings.bassBoost,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                 color = Color.White
                             )
@@ -329,7 +332,6 @@ fun EqualizerScreen(
                     }
                 }
 
-                // 3D Virtualizer Card
                 Card(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(18.dp),
@@ -353,7 +355,7 @@ fun EqualizerScreen(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "صوت محيطي 3D",
+                                text = strings.surround3d,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                 color = Color.White
                             )
@@ -409,12 +411,12 @@ fun EqualizerScreen(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "معالجة صوتية رقمية عالية الدقة (DSP Engine)",
+                            text = strings.dspEngine,
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             color = Color.White
                         )
                         Text(
-                            text = "32-bit Floating Point • 44.1 kHz • استجابة فورية بدون تأخير",
+                            text = strings.dspSpecs,
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF9DA5BF)
                         )

@@ -21,10 +21,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -33,11 +35,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,16 +59,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.localization.AppLanguage
+import com.example.localization.Localization
 import com.example.model.Song
 import com.example.ui.components.VisualizerView
 import com.example.ui.theme.DarkCard
 import com.example.ui.theme.DarkCardBorder
-import com.example.ui.theme.DarkSurface
 import com.example.ui.theme.ElectricBlue
 import com.example.ui.theme.GoldenAmber
 import com.example.ui.theme.NeonCyan
 import com.example.ui.theme.NeonPink
 import com.example.ui.theme.NeonPurple
+import com.example.viewmodel.LibraryTab
 import com.example.viewmodel.MusicUiState
 
 @Composable
@@ -69,14 +79,19 @@ fun HomeScreen(
     visualizerBars: List<Float>,
     onPlaySong: (Song) -> Unit,
     onShuffleAll: () -> Unit,
-    onNavigateLibraryTab: (com.example.viewmodel.LibraryTab) -> Unit,
+    onNavigateLibraryTab: (LibraryTab) -> Unit,
     onNavigateEqualizer: () -> Unit,
-    onScanLocalAudio: () -> Unit,
+    onNavigateAiFinder: () -> Unit,
+    onRequestStoragePermission: () -> Unit,
+    onSetLanguage: (AppLanguage) -> Unit,
     onOpenPlayer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = Localization.get(uiState.language)
     val songs = uiState.allSongs
     val recentSongs = uiState.recentSongIds.mapNotNull { id -> songs.find { it.id == id } }
+
+    var showLanguageMenu by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = modifier
@@ -94,67 +109,187 @@ fun HomeScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "نغم",
+                            text = "AuraWave",
                             style = MaterialTheme.typography.headlineMedium.copy(
                                 fontWeight = FontWeight.Black,
-                                fontSize = 32.sp
+                                fontSize = 30.sp
                             ),
                             color = NeonCyan
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "برو",
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 22.sp
+                            text = "PRO",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.Black,
+                                fontSize = 12.sp,
+                                color = Color(0xFF0C0D14)
                             ),
-                            color = NeonPurple
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(NeonPurple)
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                     }
                     Text(
-                        text = "عالمك الموسيقي المتطور",
+                        text = strings.appSubtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF9DA5BF)
                     )
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = onScanLocalAudio,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(DarkCard)
-                            .testTag("scan_audio_btn")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "تحديث مكتبة الصوتيات",
-                            tint = NeonCyan,
-                            modifier = Modifier.size(20.dp)
-                        )
+                    // Language Switcher Dropdown
+                    Box {
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(DarkCard)
+                                .clickable { showLanguageMenu = true }
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Language,
+                                contentDescription = "Language",
+                                tint = NeonCyan,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = uiState.language.shortCode,
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Color.White
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = showLanguageMenu,
+                            onDismissRequest = { showLanguageMenu = false },
+                            modifier = Modifier.background(DarkCard)
+                        ) {
+                            AppLanguage.values().forEach { lang ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = "${lang.displayName} (${lang.shortCode})",
+                                            color = if (uiState.language == lang) NeonCyan else Color.White,
+                                            fontWeight = if (uiState.language == lang) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    onClick = {
+                                        onSetLanguage(lang)
+                                        showLanguageMenu = false
+                                    }
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     IconButton(
+                        onClick = onNavigateAiFinder,
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(DarkCard)
+                            .testTag("home_ai_btn")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = "AI Music Finder",
+                            tint = NeonCyan,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    IconButton(
                         onClick = onNavigateEqualizer,
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(38.dp)
                             .clip(CircleShape)
                             .background(DarkCard)
                             .testTag("home_eq_btn")
                     ) {
                         Icon(
                             imageVector = Icons.Default.Equalizer,
-                            contentDescription = "معادل الصوت",
+                            contentDescription = "Equalizer",
                             tint = NeonPurple,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(18.dp))
+        }
+
+        // Storage & File Access Permission Banner (Requested by User)
+        if (!uiState.hasStoragePermission) {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 18.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E243B)),
+                    border = CardDefaults.outlinedCardBorder().copy(brush = Brush.horizontalGradient(listOf(NeonCyan, ElectricBlue)))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(NeonCyan.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FolderOpen,
+                                contentDescription = null,
+                                tint = NeonCyan,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = strings.permissionBannerTitle,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = strings.permissionBannerDesc,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF9DA5BF),
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Button(
+                            onClick = onRequestStoragePermission,
+                            colors = ButtonDefaults.buttonColors(containerColor = NeonCyan, contentColor = Color(0xFF0C0D14)),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.testTag("grant_permission_btn")
+                        ) {
+                            Text(
+                                text = strings.grantPermission,
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         // Hero Card: Now Playing or Featured Track
@@ -168,7 +303,9 @@ fun HomeScreen(
                         .clickable { onOpenPlayer() }
                         .testTag("hero_now_playing_card"),
                     colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                    border = CardDefaults.outlinedCardBorder().copy(brush = Brush.horizontalGradient(listOf(NeonCyan, NeonPurple)))
+                    border = CardDefaults.outlinedCardBorder().copy(
+                        brush = Brush.horizontalGradient(listOf(NeonCyan, NeonPurple))
+                    )
                 ) {
                     Box(
                         modifier = Modifier
@@ -199,7 +336,7 @@ fun HomeScreen(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = if (uiState.isPlaying) "قيد التشغيل الآن" else "موصى به لك",
+                                        text = if (uiState.isPlaying) strings.nowPlaying else strings.recommendedForYou,
                                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                         color = NeonCyan
                                     )
@@ -218,7 +355,6 @@ fun HomeScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Thumbnail
                                 Box(
                                     modifier = Modifier
                                         .size(76.dp)
@@ -295,7 +431,7 @@ fun HomeScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "تشغيل",
+                                        contentDescription = "Play",
                                         tint = Color(0xFF0C0D14),
                                         modifier = Modifier.size(28.dp)
                                     )
@@ -304,7 +440,6 @@ fun HomeScreen(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Mini live visualizer inside hero
                             VisualizerView(
                                 bars = visualizerBars,
                                 isPlaying = uiState.isPlaying,
@@ -340,14 +475,14 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "خلط الكل",
+                        text = strings.shuffleAll,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
                 // Favorites Button
                 Button(
-                    onClick = { onNavigateLibraryTab(com.example.viewmodel.LibraryTab.FAVORITES) },
+                    onClick = { onNavigateLibraryTab(LibraryTab.FAVORITES) },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -363,13 +498,13 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "المفضلة (${uiState.favoriteIds.size})",
+                        text = "${strings.favorites} (${uiState.favoriteIds.size})",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(26.dp))
         }
 
         // Recently Played Section
@@ -381,7 +516,7 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "تم تشغيلها مؤخراً",
+                        text = strings.recentlyPlayed,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
@@ -400,21 +535,35 @@ fun HomeScreen(
             }
         }
 
-        // Curated Library / Genres Section
+        // Genres Section
         item {
             Text(
-                text = "استكشف حسب التصنيف",
+                text = strings.exploreGenres,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            val genres = listOf(
-                Triple("موسيقى شرقية", NeonCyan, "أنغام وأوتار أصيلة"),
-                Triple("سينث ويف", NeonPurple, "نبض المستقبل الإلكتروني"),
-                Triple("كلاسيك حديث", ElectricBlue, "سكينة البيانو والهدوء"),
-                Triple("جاز ومطر", GoldenAmber, "دفء وإيقاع الساكسفون")
-            )
+            val genres = when (uiState.language) {
+                AppLanguage.ARABIC -> listOf(
+                    Triple("موسيقى شرقية", NeonCyan, "أنغام وأوتار أصيلة"),
+                    Triple("سينث ويف", NeonPurple, "نبض المستقبل الإلكتروني"),
+                    Triple("كلاسيك حديث", ElectricBlue, "سكينة البيانو والهدوء"),
+                    Triple("جاز ومطر", GoldenAmber, "دفء وإيقاع الساكسفون")
+                )
+                AppLanguage.FRENCH -> listOf(
+                    Triple("Musique Orientale", NeonCyan, "Cordes et mélodies authentiques"),
+                    Triple("Synthwave Cyber", NeonPurple, "Pulsations électroniques futuristes"),
+                    Triple("Néo-classique", ElectricBlue, "Sérénité du piano moderne"),
+                    Triple("Jazz & Pluie", GoldenAmber, "Chaleur veloutée du saxophone")
+                )
+                else -> listOf(
+                    Triple("Oriental Strings", NeonCyan, "Authentic acoustic harmonies"),
+                    Triple("Cyber Synthwave", NeonPurple, "Futuristic analog electronic pulse"),
+                    Triple("Modern Classical", ElectricBlue, "Therapeutic piano serenades"),
+                    Triple("Rainy Cafe Jazz", GoldenAmber, "Warm saxophone & upright bass")
+                )
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -426,7 +575,7 @@ fun HomeScreen(
                         subtitle = subtitle,
                         accentColor = color,
                         modifier = Modifier.weight(1f),
-                        onClick = { onNavigateLibraryTab(com.example.viewmodel.LibraryTab.GENRES) }
+                        onClick = { onNavigateLibraryTab(LibraryTab.GENRES) }
                     )
                 }
             }
@@ -441,7 +590,7 @@ fun HomeScreen(
                         subtitle = subtitle,
                         accentColor = color,
                         modifier = Modifier.weight(1f),
-                        onClick = { onNavigateLibraryTab(com.example.viewmodel.LibraryTab.GENRES) }
+                        onClick = { onNavigateLibraryTab(LibraryTab.GENRES) }
                     )
                 }
             }
@@ -456,16 +605,16 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "جميع الأغاني (${songs.size})",
+                    text = "${strings.allTracks} (${songs.size})",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color.White
                 )
 
                 Text(
-                    text = "عرض الكل",
+                    text = strings.viewAll,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     color = NeonCyan,
-                    modifier = Modifier.clickable { onNavigateLibraryTab(com.example.viewmodel.LibraryTab.SONGS) }
+                    modifier = Modifier.clickable { onNavigateLibraryTab(LibraryTab.SONGS) }
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))

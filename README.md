@@ -1,88 +1,73 @@
-# 🎵 تطبيق نغم برو | Nagham Music Player Pro
+# 🎵 AuraWave Music Player Pro
 
-تطبيق موسيقى متطور وشامل لنظام أندرويد يجمع بين التصميم العصري والأداء القوي، ويمنح المستخدم تجربة احترافية للاستماع إلى الموسيقى في أي وقت وبجودة صوت عالية.
+**AuraWave** is a luxurious, next-generation Android music player combining ultra-high-fidelity acoustic performance with high-end Material 3 Obsidian & Neon aesthetics.
 
----
-
-## 🌟 الميزات والمواصفات الفنية الرئيسية
-
-### 1. 🎚️ مشغل موسيقى متكامل واحترافي
-- **التحكم الكامل:** تشغيل / إيقاف مؤقت، الانتقال السريع بين المقاطع، وشريط تمرير زمني تفاعلي.
-- **أوضاع التشغيل:** دعم وضع التكرار (تكرار الكل، تكرار أغنية واحدة، إيقاف التكرار)، ووضع التشغيل العشوائي (Shuffle).
-- **التحكم في السرعة:** إمكانية تعديل سرعة الاستماع (0.75x, 1.0x, 1.25x, 1.5x, 2.0x).
-- **مؤقت النوم الذكي (Sleep Timer):** ضبط وقت مخصص لإيقاف التشغيل تلقائياً (15، 30، 45، 60 دقيقة أو وقت مخصص).
-- **مشغل مصغر (Mini Player):** شريط وصول سريع عائم يتيح التحكم بالصوت من أي شاشة داخل التطبيق.
-
-### 2. 🎼 معادل صوت احترافي ومؤثرات متقدمة (5-Band Pro Equalizer)
-- **5 نطاقات ترددية:** معالجة دقيقة للترددات (60Hz, 230Hz, 910Hz, 3.6kHz, 14kHz) بمعدل كسب من -12dB إلى +12dB.
-- **إعدادات مسبقة ذكية (Presets):** عادي (Flat)، روك (Rock)، بوب (Pop)، جاز (Jazz)، كلاسيكي (Classical)، تضخيم الباس (Bass Boost)، صوت نقي (Vocal)، وإلكتروني (EDM).
-- **تضخيم الباس (Bass Boost):** مضخم ترددات منخفضة فائق النقاء بنسبة 0% إلى 100%.
-- **صوت محيطي ثلاثي الأبعاد (3D Virtualizer):** محاكاة المكان الصوتي وعمق الستيريو.
-- **محلل الترددات الطيفي المباشر (Live Audio Visualizer):** شاشة أمواج صوتية متحركة تتفاعل ديناميكياً مع الإيقاع.
-
-### 3. 📜 كلمات الأغاني المتزامنة (Synced Lyrics)
-- عرض كلمات الأغاني سطراً بسطر بالتزامن مع توقيت الصوت.
-- تلوين وإبراز السطر الحالي تلقائياً مع تمرير سلس في منتصف الشاشة.
-- إمكانية الضغط على أي سطر للانتقال المباشر والفوري لتلك اللحظة في المقطع.
-- التبديل السلس بين شاشة أسطوانة الفينيل الدوارة وشاشة الكلمات.
-
-### 4. 📂 مكتبة موسيقية منظمة وقوائم تشغيل مخصصة
-- **تصنيف المكتبة الشامل:** تنظيم فوري حسب الأغاني (Songs)، الفنانين (Artists)، الألبومات (Albums)، والأنواع (Genres).
-- **قوائم التشغيل المخصصة (Custom Playlists):** إنشاء، تسمية، تعديل، وحذف قوائم التشغيل بسهولة مع إمكانية إضافة وإزالة الأغاني.
-- **قائمة المفضلة وسجل التشغيل الأخير:** وصول بنقرة واحدة إلى الأغاني المفضلة وسجل الاستماع الأخير.
-- **بحث سريع فوري:** محرك بحث يبحث في العناوين، أسماء الفنانين، الألبومات، والتصنيفات.
-
-### 5. 🔊 محرك صوتي هجين ومسح التخزين المحلي
-- **مسح تلقائي لملفات الجهاز:** دعم قراءة وتشغيل صيغ `MP3`, `FLAC`, `WAV`, `AAC`, `OGG`, `M4A` المخزنة على الذاكرة.
-- **مكتبة مدمجة عالية الدقة:** باقة من المقاطع الموسيقية المدمجة مع محرك صوتي تركيبي (Polyphonic Musical Synthesizer) يعمل حتى بدون أي ملفات خارجية.
-
-### 6. 🎨 تصميم Material 3 الفاخر والوضع الليلي
-- واجهة مستخدم مظلمة عصرية (Obsidian Dark) مع لمسات نيون براقة (Cyan & Neon Purple).
-- دعم كامل ومتكامل للغة العربية والاتجاه من اليمين إلى اليسار (RTL).
-- حركات وانتقالات فيزيائية سلسة (Spring Transitions) واستجابة لمسية فورية.
+Featuring **Gemini AI Song Recognition**, a **5-band Pro Equalizer**, **Synchronized Scrolling Lyrics**, **Full Storage & Audio Device Access**, and **Multi-Language Support** (English default, Arabic, and French).
 
 ---
 
-## 🛠️ البنية التقنية (Tech Stack)
+## 🌟 Key Features & Specifications
 
-- **لغة البرمجة:** Kotlin 2.2.10
-- **واجهة المستخدم:** Jetpack Compose + Material Design 3
-- **قاعدة البيانات المحلية:** Room Database + KSP
-- **المعالجة الصوتية:** Android MediaPlayer + AudioTrack PCM Stream + AudioFX Equalizer
-- **تحميل الصور:** Coil Compose
-- **إدارة الحالة:** MVVM + Kotlin Coroutines & StateFlow
+### 1. 🤖 Gemini AI Music & Melody Recognition (AI Song Finder)
+- **Acoustic Audio Listening:** Tap the pulsing AI orb to listen to ambient music or humming through your microphone and identify any track in seconds.
+- **Lyrics & Mood Search:** Type or hum any lyrics fragment, rhythm description, or artist cue to retrieve the exact song, album, release year, and genre.
+- **Story & Trivia:** Get fascinating background trivia and production stories for recognized tracks powered by Gemini 3.5 Flash.
+- **Instant Playback:** Play matched songs directly inside AuraWave or search them in your local library.
+
+### 2. 🎚️ 5-Band Studio Equalizer & Audio Effects
+- **Frequency Bands:** Precision manual attenuation across 5 bands (60 Hz, 230 Hz, 910 Hz, 3.6 kHz, 14 kHz) with gain range from -12dB to +12dB.
+- **Sound Presets:** Flat, Rock, Pop, Jazz, Classical, Bass Boost, Vocal Booster, and Electronic.
+- **Bass Boost & 3D Surround:** Dedicated sub-bass intensifier (0-100%) and 3D stereo room virtualizer.
+- **Live Spectrum Visualizer:** Real-time dancing audio visualizer reacting dynamically to beats and tempo.
+
+### 3. 🌍 Multi-Language Support (English, Arabic, French)
+- **Default System Language:** English (LTR) as default interface.
+- **Languages Supported:**
+  - 🇬🇧 English
+  - 🇸🇦 Arabic (العربية - full native RTL layout)
+  - 🇫🇷 French (Français)
+- Switch languages seamlessly with one tap from the Home or About screen.
+
+### 4. 📂 Complete Local Device Audio Access & Custom Playlists
+- **Full Device Scan:** Scans and indexes local files (`MP3`, `FLAC`, `WAV`, `AAC`, `OGG`, `M4A`) from phone storage.
+- **Interactive Permission Flow:** Streamlined permission request banner and automatic real-time indexing.
+- **Smart Organization:** Categorized by Songs, Artists, Albums, Genres, and Playlists.
+- **Custom Playlists:** Create, rename, edit, and delete playlists persisted offline in a local Room SQLite database.
+- **Built-in High-Resolution Catalog:** Procedural musical synthesis engine ensuring instant playback even without local files.
+
+### 5. 📜 Synchronized Lyrics & Fullscreen Vinyl Player
+- Line-by-line synchronized lyric highlighting with auto-scroll and timestamp scrub.
+- Rotating vinyl disc animation with glowing neon ambient halo.
+- Docked Mini-Player accessible across all screens.
+- Smart Sleep Timer (15, 30, 45, 60, 90 minutes) and variable playback speed (0.75x to 2.0x).
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+- **Language:** Kotlin 2.2.10
+- **UI Framework:** Jetpack Compose + Material Design 3
+- **AI Engine:** Google Gemini 3.5 Flash REST API + OkHttp & Moshi
+- **Audio Engine:** Android MediaPlayer + AudioTrack 16-bit PCM Stream + AudioFX Equalizer
+- **Database:** Android Room 2.7.0 + KSP
+- **Image Pipeline:** Coil Compose
+- **Architecture:** MVVM + Coroutines & StateFlow
 
 ---
 
-## 📱 حول المطور والتواصل (Developer Info)
+## 📱 Developer & Contact Information
 
-- **المطور:** أحمد بن ستي | Ahmed Becetti
-- **البريد الإلكتروني:** [ahmedbecetti41@gmail.com](mailto:ahmedbecetti41@gmail.com)
-- **حساب GitHub:** [@Ahmedbecett](https://github.com/Ahmedbecett)
-- **رابط المستودع:** [https://github.com/Ahmedbecett/nagham-music-player](https://github.com/Ahmedbecett/nagham-music-player)
-
----
-
-## 📥 التحميل والتثبيت (Download & Installation)
-
-### 1. رابط التنزيل المباشر لملف APK (Direct Download):
-👉 **[تحميل ملف APK مباشرة: Nagham-Music-Player-v1.0.apk (26 MB)](https://github.com/Ahmedbecett/nagham-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk)**
-
-- 🔗 **[صفحة الإصدارات الرسمية على GitHub Releases](https://github.com/Ahmedbecett/nagham-music-player/releases/tag/v1.0.0)**
-
-### 2. البناء الذاتي من المصدر (Build from Source):
-```bash
-# استنساخ المستودع
-git clone https://github.com/Ahmedbecett/nagham-music-player.git
-
-# الدخول لمجلد المشروع
-cd nagham-music-player
-
-# تجميع التطبيق وإنشاء ملف APK
-./gradlew assembleDebug
-```
-ملف APK الناتج سيكون متوفراً في:
-`app/build/outputs/apk/debug/app-debug.apk`
+- **Developer:** Ahmed Becetti (أحمد بن ستي)
+- **Email:** [ahmedbecetti41@gmail.com](mailto:ahmedbecetti41@gmail.com)
+- **GitHub Profile:** [@Ahmedbecett](https://github.com/Ahmedbecett)
+- **Repository:** [https://github.com/Ahmedbecett/nagham-music-player](https://github.com/Ahmedbecett/nagham-music-player)
 
 ---
-© 2026 تطبيق نغم برو (Nagham Music). جميع الحقوق محفوظة للمطور أحمد بن ستي.
+
+## 📥 Direct APK Download & Releases
+
+- 👉 **[Download APK: Nagham-Music-Player-v1.0.apk (26 MB)](https://github.com/Ahmedbecett/nagham-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk)**
+- 🔗 **[Official GitHub Releases](https://github.com/Ahmedbecett/nagham-music-player/releases/tag/v1.0.0)**
+
+---
+© 2026 AuraWave Music Player Pro. Developed by Ahmed Becetti.
