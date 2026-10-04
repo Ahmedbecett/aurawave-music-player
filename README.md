@@ -65,9 +65,10 @@
 
 ## 📥 التحميل والتثبيت (Download & Installation)
 
-### 1. تنزيل ملف APK المباشر:
-يمكنك تحميل التطبيق بصيغة APK مباشرة من قسم الإصدارات:
-- 🔗 **[صفحة الإصدارات وتحميل ملفات APK](https://github.com/Ahmedbecett/nagham-music-player/releases)**
+### 1. رابط التنزيل المباشر لملف APK (Direct Download):
+👉 **[تحميل ملف APK مباشرة: Nagham-Music-Player-v1.0.apk (26 MB)](https://github.com/Ahmedbecett/nagham-music-player/releases/download/v1.0.0/Nagham-Music-Player-v1.0.apk)**
+
+- 🔗 **[صفحة الإصدارات الرسمية على GitHub Releases](https://github.com/Ahmedbecett/nagham-music-player/releases/tag/v1.0.0)**
 
 ### 2. البناء الذاتي من المصدر (Build from Source):
 ```bash
