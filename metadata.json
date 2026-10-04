@@ -1,0 +1,6 @@
+{
+  "name": "Nagham Music Player",
+  "description": "تطبيق موسيقى متطور وشامل مع مشغل صوتي متقدم، معادل صوت احترافي، قوائم تشغيل، وكلمات الأغاني",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
